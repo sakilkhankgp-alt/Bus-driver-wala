@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>90s Bus Driver Radio</title>
+  <style>
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      user-select: none; /* Text ba link copy atkanor jonno */
+      -webkit-user-select: none;
+    }
+    body { 
+      background: #0f1015; 
+      color: #fff; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      min-height: 100vh; 
+      padding: 15px; 
+    }
+    .card { 
+      background: #181920; 
+      padding: 25px; 
+      border-radius: 16px; 
+      width: 100%; 
+      max-width: 420px; 
+      box-shadow: 0 12px 35px rgba(0,0,0,0.7); 
+      text-align: center; 
+      border: 1px solid #2b2d3a; 
+    }
+    h1 { color: #f59e0b; font-size: 22px; margin-bottom: 5px; }
+    .subtitle { color: #8a8d9b; font-size: 13px; margin-bottom: 16px; }
+
+    /* Status Bar */
+    .status-bar { 
+      background: #21232d; 
+      border-radius: 8px; 
+      padding: 10px 14px; 
+      margin-bottom: 16px; 
+      font-size: 13px; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      border: 1px solid #323545; 
+    }
+    .badge { 
+      background: #f59e0b; 
+      color: #000; 
+      padding: 3px 10px; 
+      border-radius: 12px; 
+      font-weight: bold; 
+      font-size: 11px; 
+    }
+
+    /* Screen */
+    .retro-screen { 
+      background: #000; 
+      border: 2px solid #2b2d3a; 
+      border-radius: 10px; 
+      padding: 18px 14px; 
+      margin-bottom: 16px; 
+    }
+    .track-name { 
+      font-weight: bold; 
+      color: #10b981; 
+      margin-bottom: 12px; 
+      font-size: 15px; 
+    }
+    audio { 
+      width: 100%; 
+      filter: invert(0.85); 
+    }
+
+    /* Categories */
+    .category-buttons { 
+      display: flex; 
+      gap: 8px; 
+      justify-content: center; 
+      margin-bottom: 16px; 
+    }
+    .cat-btn { 
+      background: #252836; 
+      color: #bbb; 
+      border: 1px solid #383c4e; 
+      padding: 8px 14px; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      font-size: 12px; 
+      font-weight: 600;
+    }
+    .cat-btn.active { 
+      background: #f59e0b; 
+      color: #000; 
+      border-color: #f59e0b;
+    }
+
+    /* Modals / Pop-ups */
+    .modal { 
+      display: none; 
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      background: rgba(0,0,0,0.92); 
+      justify-content: center; 
+      align-items: center; 
+      z-index: 999; 
+      padding: 15px; 
+    }
+    .modal-content { 
+      background: #1c1d24; 
+      padding: 24px; 
+      border-radius: 14px; 
+      max-width: 330px; 
+      width: 100%; 
+      text-align: center; 
+      border: 1px solid #f59e0b; 
+    }
+    .qr-box { 
+      background: #fff; 
+      padding: 8px; 
+      border-radius: 10px; 
+      margin: 14px auto; 
+      width: 175px; 
+      height: 175px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+    }
+    .qr-box img { 
+      width: 100%; 
+      height: 100%; 
+    }
+
+    .btn { 
+      width: 100%; 
+      padding: 11px; 
+      border-radius: 8px; 
+      border: none; 
+      font-weight: bold; 
+      cursor: pointer; 
+      margin-top: 10px; 
+      font-size: 13px; 
+    }
+    .btn-gold { background: #f59e0b; color: #000; }
+    .btn-green { background: #10b981; color: #fff; }
+    .btn-gray { background: #2f3242; color: #bbb; }
+  </style>
+</head>
+<body oncontextmenu="return false;">
+
+  <div class="card">
+    <h1>🚌 90s Bus Driver Radio</h1>
+    <div class="subtitle">Nostalgic High-Bass Cassette Hits</div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>Status: <b id="userStatusText">Checking...</b></span>
+      <span class="badge" id="timerBadge">--</span>
+    </div>
+
+    <!-- Genre Buttons -->
+    <div class="category-buttons">
+      <button class="cat-btn active" onclick="loadTrack('bengali')">Bengali</button>
+      <button class="cat-btn" onclick="loadTrack('hindi')">Hindi Jhankar</button>
+      <button class="cat-btn" onclick="loadTrack('bhojpuri')">Bhojpuri Classic</button>
+    </div>
+
+    <!-- Retro Audio Screen -->
+    <div class="retro-screen">
+      <div class="track-name" id="trackTitle">Bengali 90s Bus Mix</div>
+      <!-- controlsList nodownload diye built-in download bondho kora ache -->
+      <audio id="audioPlayer" controls controlsList="nodownload" oncontextmenu="return false;">
+        <source id="audioSource" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+      </audio>
+    </div>
+
+    <button class="btn btn-gold" onclick="openPaymentModal(false)">☕ Support With ₹5 (Lifetime VIP)</button>
+  </div>
+
+  <!-- 1. Welcome Treat Modal -->
+  <div class="modal" id="welcomeModal">
+    <div class="modal-content">
+      <h3 style="color: #f59e0b;">☕ Ek Cup Cha Treat (₹5)</h3>
+      <p style="font-size: 13px; color: #ccc; margin: 12px 0;">
+        Amar banano nostalgic bus radio bhalo lagle tumi <b>₹5 diye lifetime access</b> nite paro.
+      </p>
+      <p style="font-size: 12px; color: #10b981; font-weight: bold; margin-bottom: 14px;">
+        Tobe age 24 Ghonta puro free-te shune dekho!
+      </p>
+      
+      <button class="btn btn-green" onclick="startFreeTrial()">🎧 24 Ghonta Free-te Shuru Korun</button>
+      <button class="btn btn-gold" onclick="openPaymentModal(false)">☕ Ekhoni ₹5 diye Lifetime Nibo</button>
+    </div>
+  </div>
+
+  <!-- 2. QR Code / Lock Modal -->
+  <div class="modal" id="paymentModal">
+    <div class="modal-content">
+      <h3 id="modalHeading" style="color: #f59e0b;">Lifetime VIP Pass</h3>
+      <p id="modalDesc" style="font-size: 12px; color: #aaa; margin-top: 6px;">
+        Scan kore matro ₹5 pay korun ar lifetime radio enjoy korun!
+      </p>
+
+      <div class="qr-box">
+        <!-- 9734424605@mbk -->
+        <img id="upiQr" src="https://api.qrserver.com/v1/create-qr-code/?size=175x175&data=upi://pay?pa=YOUR_UPI_ID_HERE%26pn=BusDriverRadio%26am=5.00%26cu=INR" alt="UPI QR">
+      </div>
+
+      <p style="font-size: 11px; color: #777;">PhonePe / GPay / Paytm diye scan korun</p>
+
+      <button class="btn btn-green" onclick="markAsPaid()">Payment Done ✅ (Unlock)</button>
+      <button class="btn btn-gray" id="closePayBtn" onclick="closePaymentModal()">Pore Korbho</button>
+    </div>
+  </div>
+
+  <script>
+    // Audio links
+    const songs = {
+      bengali: { title: "Bengali 90s Bus Route Mix", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+      hindi: { title: "90s Jhankar Beats Bollywood", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+      bhojpuri: { title: "Bhojpuri Dholak Bus Classic", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
+    };
+
+    const player = document.getElementById('audioPlayer');
+    const source = document.getElementById('audioSource');
+    const title = document.getElementById('trackTitle');
+
+    // 24 Hours = 24 * 60 * 60 * 1000 ms
+    const TRIAL_DURATION = 24 * 60 * 60 * 1000;
+
+    function loadTrack(genre) {
+      if (isExpired() && !isPaid()) {
+        lockAccessPermanently();
+        return;
+      }
+      document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      title.innerText = songs[genre].title;
+      source.src = songs[genre].url;
+      player.load();
+      player.play();
+    }
+
+    function isPaid() {
+      return localStorage.getItem('radio_status') === 'lifetime';
+    }
+
+    function isExpired() {
+      const startTime = localStorage.getItem('radio_trial_start');
+      if (!startTime) return false;
+      return (new Date().getTime() - parseInt(startTime)) > TRIAL_DURATION;
+    }
+
+    function checkUserFlow() {
+      if (isPaid()) {
+        document.getElementById('userStatusText').innerText = 'Lifetime VIP';
+        document.getElementById('timerBadge').innerText = 'LIFETIME';
+        return;
+      }
+
+      const trialStart = localStorage.getItem('radio_trial_start');
+
+      if (!trialStart) {
+        // First entry Welcome modal
+        document.getElementById('welcomeModal').style.display = 'flex';
+      } else {
+        if (isExpired()) {
+          lockAccessPermanently();
+        } else {
+          startCountdown();
+        }
+      }
+    }
+
+    function startFreeTrial() {
+      const now = new Date().getTime();
+      localStorage.setItem('radio_trial_start', now);
+      document.getElementById('welcomeModal').style.display = 'none';
+      startCountdown();
+      player.play();
+    }
+
+    function startCountdown() {
+      document.getElementById('userStatusText').innerText = 'Free Trial';
+      setInterval(() => {
+        if (isPaid()) return;
+        const startTime = parseInt(localStorage.getItem('radio_trial_start'));
+        const remaining = TRIAL_DURATION - (new Date().getTime() - startTime);
+
+        if (remaining <= 0) {
+          lockAccessPermanently();
+        } else {
+          const hours = Math.floor(remaining / (1000 * 60 * 60));
+          const mins = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+          const secs = Math.floor((remaining % (1000 * 60)) / 1000);
+          document.getElementById('timerBadge').innerText = `${hours}h ${mins}m ${secs}s`;
+        }
+      }, 1000);
+    }
+
+    // 24 ghonta por permanent lock screen
+    function lockAccessPermanently() {
+      player.pause();
+      document.getElementById('userStatusText').innerText = 'Trial Shesh';
+      document.getElementById('timerBadge').innerText = 'EXPIRED';
+
+      document.getElementById('modalHeading').innerText = '🔒 24 Ghonta Shesh!';
+      document.getElementById('modalDesc').innerText = 'Apnar 24 ghontar trial shesh hoye geche. Radio abar chalu korte matro ₹5 diye lifetime pass nin.';
+      document.getElementById('closePayBtn').style.display = 'none'; // Lock screen bondho kora jabe na
+      document.getElementById('paymentModal').style.display = 'flex';
+    }
+
+    function openPaymentModal(isLocked) {
+      document.getElementById('welcomeModal').style.display = 'none';
+      document.getElementById('paymentModal').style.display = 'flex';
+    }
+
+    function closePaymentModal() {
+      document.getElementById('paymentModal').style.display = 'none';
+    }
+
+    function markAsPaid() {
+      localStorage.setItem('radio_status', 'lifetime');
+      alert('Onek dhonnobad! Lifetime access unlocked. 🎉');
+      document.getElementById('paymentModal').style.display = 'none';
+      document.getElementById('userStatusText').innerText = 'Lifetime VIP';
+      document.getElementById('timerBadge').innerText = 'LIFETIME';
+      player.play();
+    }
+
+    // Anti-Download Protections
+    document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+    document.addEventListener('keydown', function(e) {
+      if (e.keyCode === 123) { e.preventDefault(); return false; } // F12
+      if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'U' || e.key === 'S')) {
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    window.onload = checkUserFlow;
+  </script>
+</body>
+</html>
